@@ -23,7 +23,13 @@ class AccountSerializer(serializers.ModelSerializer):
 
 
 #EXAMPLE of creating own post request that arent generic
-##class CreateMatchSerializer(serializers.ModelSerializer):
-  ##  class Meta:
-    ##    model = Match
-    ##    fields = ('value', 'value2')
+class CreateAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ('username', 'firstname', 'lastname', 'email')
+
+#Delete account serializer
+class DeleteAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ['username']
