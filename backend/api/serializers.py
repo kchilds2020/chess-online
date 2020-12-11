@@ -20,3 +20,10 @@ class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = '__all__'
+
+
+#EXAMPLE of creating own post request that arent generic
+##class CreateMatchSerializer(serializers.ModelSerializer):
+  ##  class Meta:
+    ##    model = Match
+    ##    fields = ('value', 'value2')
