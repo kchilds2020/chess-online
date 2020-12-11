@@ -1,2 +1,6 @@
+#frontend exclusions
 frontend/node_modules/
+
+#backend exclusions
 db.sqlite3
+env/
