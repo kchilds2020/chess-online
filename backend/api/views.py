@@ -3,11 +3,59 @@ from api.models import Account
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import status, generics
-from api.serializers import UserSerializer, GroupSerializer, AccountSerializer, CreateAccountSerializer, DeleteAccountSerializer
+from rest_framework.decorators import api_view
+from api.serializers import UserSerializer, GroupSerializer, AccountSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.http import HttpResponse
 
+@api_view(['GET'])
+def apiOverview(request):
+    api_urls = {
+        'List': '/accounts/',
+        'Get Specific Account': '/accounts/<str:pk>/',
+        'Create': '/create-account/',
+        'Update': '/update-account/<str:pk>/',
+        'Delete': '/delete-account/<str:pk>/'
+    }
+    return Response(api_urls)
+
+@api_view(['GET'])
+def listAccounts(request):
+    accounts = Account.objects.all()
+    serializer = AccountSerializer(accounts, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getSpecificAccount(request,pk):
+    accounts = Account.objects.get(id=pk)
+    serializer = AccountSerializer(accounts, many=False)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def createAccount(request):
+    serializer = AccountSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def updateAccount(request, pk):
+    account = Account.objects.get(id=pk)
+    serializer = AccountSerializer(instance=account,data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+        
+    return Response(serializer.data)
+
+@api_view(['DELETE'])
+def deleteAccount(request, pk):
+    account = Account.objects.get(id=pk)
+    account.delete()
+        
+    return Response('Item successfully deleted!')
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -27,42 +75,3 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-class AccountViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows accounts to be viewed or edited.
-    """
-    queryset = Account.objects.all()
-    serializer_class = AccountSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class CreateAccountView(APIView):
-    serializer_class = CreateAccountSerializer
-
-    def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.data)
-
-        if serializer.is_valid():
-            username = serializer.data.get('username')
-            firstname = serializer.data.get('firstname')
-            lastname = serializer.data.get('lastname')
-            email = serializer.data.get('email')
-
-            account = Account(username=username, firstname=firstname, lastname=lastname, email=email)
-            account.save()
-
-            return Response(AccountSerializer(account).data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class DeleteAccountView(APIView):
-    def delete(self, request, pk):
-        print(pk)
-        try:
-            account = Account.objects.get(id=pk)
-            account.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Account.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        

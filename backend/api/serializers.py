@@ -20,16 +20,3 @@ class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = '__all__'
-
-
-#EXAMPLE of creating own post request that arent generic
-class CreateAccountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Account
-        fields = ('username', 'firstname', 'lastname', 'email')
-
-#Delete account serializer
-class DeleteAccountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Account
-        fields = ['username']

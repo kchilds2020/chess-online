@@ -1,13 +1,11 @@
-from rest_framework import routers
 from django.urls import path
-from .views import AccountViewSet, CreateAccountView, DeleteAccountView
-
-router = routers.DefaultRouter()
-router.register(r'accounts', AccountViewSet)
+from . import views
 
 urlpatterns = [
-    path('create-account', CreateAccountView.as_view()),
-    path('delete-account/<int:pk>', DeleteAccountView.as_view())
+    path('', views.apiOverview,name='api'),
+    path('accounts/', views.listAccounts, name='list-accounts'),
+    path('accounts/<str:pk>/', views.getSpecificAccount, name='list-account'),
+    path('create-account/', views.createAccount, name='create-account'),
+    path('update-account/<str:pk>/', views.updateAccount, name='update-account'),
+    path('delete-account/<str:pk>/', views.deleteAccount, name='delete-account'),
 ]
-
-urlpatterns += router.urls
