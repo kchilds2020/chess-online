@@ -1,8 +1,14 @@
-import React from 'react'
+import Axios from 'axios'
+import React, {useEffect} from 'react'
 import Button from 'react-bootstrap/Button'
 import styled from 'styled-components'
 
 const Landing = () => {
+
+    useEffect(() => {
+        Axios.get('http://localhost:8000/api/check-session/')
+        .then(res => console.log(res))
+    }, [])
     return (
         <div>
             <Title>Online Chess!</Title>

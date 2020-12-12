@@ -8,6 +8,7 @@ import {
 import TopNavigation from './components/navigation/TopNavigation'
 import Landing from './components/landing/Landing'
 import Login from './components/login/Login'
+import CreateAccount from './components/create-account/CreateAccount'
 
 
 
@@ -24,6 +25,9 @@ const App = () => {
       <Switch>
         <Route path="/login">
           <Login />
+        </Route>
+        <Route path="/create-account">
+          <CreateAccount />
         </Route>
         <Route path="/">
           <Landing />
