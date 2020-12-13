@@ -78,7 +78,7 @@ def checkSession(request):
     else:
         return Response('user not found')
 
-#login user
+#authentication check for user
 @api_view(['GET'])
 def checkSession(request):
     if 'user' in request.session:
@@ -86,11 +86,32 @@ def checkSession(request):
     else:
         return Response('user not found')
 
-#delete user
+#logout user
 @api_view(['GET'])
 def logout(request):
     del request.session['user']
     return Response('user logged out')
+
+#login user
+@api_view(['POST'])
+def login(request):
+    #verify username and password
+    account = Account.objects.get(username=request.data['username'])
+    
+    serializer = AccountSerializer(account, many=False)
+    print(serializer.data)
+    if 'username' in serializer.data:
+        password = request.data['password']
+
+        if check_password(password, serializer.data['password']):
+            request.session['user'] = serializer.data
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response('password is incorrect')
+    else:
+        return Response('incorrect username')
+
+    return Response('TEST')
 
 
 class UserViewSet(viewsets.ModelViewSet):
