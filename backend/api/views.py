@@ -1,19 +1,20 @@
-from django.contrib.auth.models import User, Group
-from api.models import Account
+from django.contrib.auth.models import Group
+from api.models import User
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import status, generics
 from rest_framework.decorators import api_view
-from api.serializers import UserSerializer, GroupSerializer, AccountSerializer
+from api.serializers import UserSerializer, GroupSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password, check_password
+from rest_framework.authtoken.models import Token
 
 @api_view(['GET'])
 def apiOverview(request):
 
     api_urls = {
-        'List': '/accounts/',
+        'List': '/users/',
         'Get Specific Account': '/accounts/<str:pk>/',
         'Create': '/create-account/',
         'Update': '/update-account/<str:pk>/',
@@ -22,42 +23,44 @@ def apiOverview(request):
     return Response(api_urls)
 
 @api_view(['GET'])
-def listAccounts(request):
-    if 'user' in request.session:
-        print(request.session['user'])
-
-    accounts = Account.objects.all()
-    serializer = AccountSerializer(accounts, many=True)
+def listUsers(request):
+    users = User.objects.all()
+    serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
-def getSpecificAccount(request,pk):
-    accounts = Account.objects.get(id=pk)
-    serializer = AccountSerializer(accounts, many=False)
+def getSpecificUser(request,pk):
+    user = User.objects.get(id=pk)
+    serializer = UserSerializer(user, many=False)
     return Response(serializer.data)
 
 @api_view(['POST'])
-def createAccount(request):
-    serializer = AccountSerializer(data=request.data)
+def createUser(request):
+    #encrypt password
+    enc_password = make_password(request.data['password'])
+    request.data['password'] = enc_password
 
+    #validate data
+    serializer = UserSerializer(data=request.data)
+
+    data={}
     if serializer.is_valid():
-        username = serializer.data['username']
-        firstname = serializer.data['firstname']
-        lastname = serializer.data['lastname']
-        email = serializer.data['email']
-        password = make_password(serializer.data['password'])
-        account = Account(username=username, firstname=firstname, lastname=lastname, email=email, password=password)
-        account.save()
-        request.session['user'] = serializer.data
-        request.cookies['user'] = serializer.data
-        return Response(serializer.data)
+        account = serializer.save()
+        data['username'] = serializer.data['username']
+        data['firstname'] = serializer.data['firstname']
+        data['lastname'] = serializer.data['lastname']
+        data['email'] = serializer.data['email']
+        data['password'] = serializer.data['password']
+        token = Token.objects.get(user=account).key
+        data['token'] = token
+        return Response(data)
     else:
         return Response(serializer.errors)
 
 @api_view(['POST'])
-def updateAccount(request, pk):
-    account = Account.objects.get(id=pk)
-    serializer = AccountSerializer(instance=account,data=request.data)
+def updateUser(request, pk):
+    user = User.objects.get(id=pk)
+    serializer = UserSerializer(instance=user,data=request.data)
 
     if serializer.is_valid():
         serializer.save()
@@ -65,55 +68,35 @@ def updateAccount(request, pk):
     return Response(serializer.data)
 
 @api_view(['DELETE'])
-def deleteAccount(request, pk):
-    account = Account.objects.get(id=pk)
-    account.delete()
+def deleteUser(request, pk):
+    user = User.objects.get(id=pk)
+    user.delete()
         
     return Response('Item successfully deleted!')
-
-#check if user has a session
-@api_view(['GET'])
-def checkSession(request):
-    if 'user' in request.session:
-        return Response(request.session['user'])
-    else:
-        return Response('user not found')
-
-#authentication check for user
-@api_view(['GET'])
-def checkSession(request):
-    if 'user' in request.COOKIES:
-        return Response(request.COOKIES['user'])
-    else:
-        return Response('user not found')
-
-#logout user
-@api_view(['GET'])
-def logout(request):
-    return Response('user logged out')
 
 #login user
 @api_view(['POST'])
 def login(request):
     #verify username and password
-    print(request.data)
-    account = Account.objects.get(username=request.data['username'])
+    user = User.objects.get(username=request.data['username'])
     
-    serializer = AccountSerializer(account, many=False)
+    serializer = UserSerializer(user, many=False)
     print(serializer.data)
     if 'username' in serializer.data:
         password = request.data['password']
-
         if check_password(password, serializer.data['password']):
-            request.session['user'] = serializer.data
-            res = Response(serializer.data, status=status.HTTP_200_OK)
-            return res
+            data={}
+            data['username'] = serializer.data['username']
+            data['firstname'] = serializer.data['firstname']
+            data['lastname'] = serializer.data['lastname']
+            data['email'] = serializer.data['email']
+            data['password'] = serializer.data['password']
+            data['token'] = Token.objects.get(user=serializer.data['id']).key
+            return Response(data, status=status.HTTP_200_OK)
         else:
             return Response('password is incorrect')
     else:
         return Response('incorrect username')
-
-    return Response('TEST')
 
 
 class UserViewSet(viewsets.ModelViewSet):
