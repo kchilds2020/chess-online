@@ -49,6 +49,7 @@ def createAccount(request):
         account = Account(username=username, firstname=firstname, lastname=lastname, email=email, password=password)
         account.save()
         request.session['user'] = serializer.data
+        request.cookies['user'] = serializer.data
         return Response(serializer.data)
     else:
         return Response(serializer.errors)
@@ -81,21 +82,21 @@ def checkSession(request):
 #authentication check for user
 @api_view(['GET'])
 def checkSession(request):
-    if 'user' in request.session:
-        return Response(request.session['user'])
+    if 'user' in request.COOKIES:
+        return Response(request.COOKIES['user'])
     else:
         return Response('user not found')
 
 #logout user
 @api_view(['GET'])
 def logout(request):
-    del request.session['user']
     return Response('user logged out')
 
 #login user
 @api_view(['POST'])
 def login(request):
     #verify username and password
+    print(request.data)
     account = Account.objects.get(username=request.data['username'])
     
     serializer = AccountSerializer(account, many=False)
@@ -105,7 +106,8 @@ def login(request):
 
         if check_password(password, serializer.data['password']):
             request.session['user'] = serializer.data
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            res = Response(serializer.data, status=status.HTTP_200_OK)
+            return res
         else:
             return Response('password is incorrect')
     else:
