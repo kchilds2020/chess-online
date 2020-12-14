@@ -15,10 +15,10 @@ def apiOverview(request):
 
     api_urls = {
         'List': '/users/',
-        'Get Specific Account': '/accounts/<str:pk>/',
-        'Create': '/create-account/',
-        'Update': '/update-account/<str:pk>/',
-        'Delete': '/delete-account/<str:pk>/'
+        'Get Specific Account': '/users/<str:pk>/',
+        'Create': '/create-user/',
+        'Update': '/update-user/<str:pk>/',
+        'Delete': '/delete-user/<str:pk>/'
     }
     return Response(api_urls)
 
@@ -81,7 +81,6 @@ def login(request):
     user = User.objects.get(username=request.data['username'])
     
     serializer = UserSerializer(user, many=False)
-    print(serializer.data)
     if 'username' in serializer.data:
         password = request.data['password']
         if check_password(password, serializer.data['password']):
@@ -115,4 +114,3 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
-

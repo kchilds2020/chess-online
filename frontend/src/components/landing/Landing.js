@@ -6,8 +6,9 @@ import styled from 'styled-components'
 const Landing = () => {
 
     useEffect(() => {
-        Axios.get('http://localhost:8000/api/check-session/')
-        .then(res => console.log(res))
+        console.log(localStorage.getItem('token'), localStorage.getItem('username'))
+        /* Axios.get('http://localhost:8000/api/check-session/')
+        .then(res => console.log(res)) */
     }, [])
     return (
         <div>

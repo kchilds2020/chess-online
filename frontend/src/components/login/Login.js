@@ -10,7 +10,12 @@ const Login = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
         axios.post('http://localhost:8000/api/login/',data)
-        .then(res=>console.log(res))
+        .then(res=>{
+            localStorage.setItem('token',res.data.token)
+            localStorage.setItem('username',res.data.username)
+
+            console.log(res.data)
+        })
     }
 
     return (
