@@ -6,7 +6,15 @@ import styled from 'styled-components'
 const Landing = () => {
 
     useEffect(() => {
-        console.log(localStorage.getItem('token'), localStorage.getItem('username'))
+        console.log(localStorage.getItem('token'), localStorage.getItem('user_id'))
+        if(localStorage.getItem('token')){
+            let token = localStorage.getItem('token')
+            let user_id = localStorage.getItem('user_id')
+            Axios.get(`http://localhost:8000/api/users/${user_id}`,{
+                    headers: {'Authorization': `token ${token}`}
+                    })
+                .then(res => console.log(res.data))
+        }
         /* Axios.get('http://localhost:8000/api/check-session/')
         .then(res => console.log(res)) */
     }, [])

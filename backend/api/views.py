@@ -3,7 +3,8 @@ from api.models import User
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import status, generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from api.serializers import UserSerializer, GroupSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -29,10 +30,13 @@ def listUsers(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getSpecificUser(request,pk):
     user = User.objects.get(id=pk)
     serializer = UserSerializer(user, many=False)
-    return Response(serializer.data)
+    data= serializer.data
+    del data['password']
+    return Response(data)
 
 @api_view(['POST'])
 def createUser(request):
@@ -85,6 +89,7 @@ def login(request):
         password = request.data['password']
         if check_password(password, serializer.data['password']):
             data={}
+            data['id'] = serializer.data['id']
             data['username'] = serializer.data['username']
             data['firstname'] = serializer.data['firstname']
             data['lastname'] = serializer.data['lastname']
@@ -93,10 +98,9 @@ def login(request):
             data['token'] = Token.objects.get(user=serializer.data['id']).key
             return Response(data, status=status.HTTP_200_OK)
         else:
-            return Response('password is incorrect')
+            return Response('password is incorrect', status=status.HTTP_206_PARTIAL_CONTENT)
     else:
-        return Response('incorrect username')
-
+        return Response('incorrect username', status=status.HTTP_206_PARTIAL_CONTENT)
 
 class UserViewSet(viewsets.ModelViewSet):
     """

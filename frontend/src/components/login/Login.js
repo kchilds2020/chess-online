@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import {useHistory} from 'react-router-dom'
 import axios from 'axios'
 
 const Login = () => {
@@ -6,16 +7,23 @@ const Login = () => {
         username: '',
         password: ''
     })
+    let history = useHistory();
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        axios.post('http://localhost:8000/api/login/',data)
+        axios.post('http://localhost:8000/api/login/', data)
         .then(res=>{
-            localStorage.setItem('token',res.data.token)
-            localStorage.setItem('username',res.data.username)
-
-            console.log(res.data)
+            if(res.status === 200){
+                
+                localStorage.setItem('token',res.data.token)
+                localStorage.setItem('user_id',res.data.id)
+                history.push('/home')
+            }else{
+                alert(res.data)
+                setData({username:'', password:''})
+            }
         })
+        .catch(err => console.log(err))
     }
 
     return (
