@@ -5,11 +5,17 @@ const Home = () => {
     let {user, setUser} = useContext(UserContext)
     return (
         <>
-            <h1>Home</h1>
+            
             {user ? 
             <>
-            <div>{user.firstname}</div>
-            <div>{user.lastname}</div>
+            <h1>Welcome {user.firstname}</h1>
+            <div>Games Played: {user.total_games}</div>
+            <div>Wins: {user.wins}</div>
+            <div>Draws: {user.total_games - (user.wins + user.losses)}</div>
+            <div>Losses: {user.losses}</div>
+            <button>Find Match</button>
+            
+        
             </>:<></>
             }
         </>

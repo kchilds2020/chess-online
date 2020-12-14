@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
-from api.models import User
+from api.models import User, Queue, Match
 
 
 """ class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -19,4 +19,16 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields = '__all__'
+
+#Account Serializer
+class QueueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Queue
+        fields = '__all__'
+
+#Account Serializer
+class MatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Match
         fields = '__all__'
