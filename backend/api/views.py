@@ -166,30 +166,39 @@ def findMatch(request):
         if match_serializer.is_valid():
             match_serializer.save()
             #update users active_games field
-            user = UserSerializer(User.objects.get(username=data['black']), many=False)
-            temp = UserSerializer(User.objects.get(username=data['black']), many=False)
+            username = User.objects.get(username=data['black'])
+            user = UserSerializer(username)
+            print("USER")
+            print(user)
+            temp = UserSerializer(username)
+            print("temp")
+            print(temp)
 
             user_data = {}
-            user_data['username'] = temp['username']
-            user_data['email'] = temp['email']
-            user_data['firstname'] = temp['firstname']
-            user_data['lastname'] = temp['lastname']
-            user_data['active_games'] = temp['active_games']
+            user_data['id']=temp['id'].value
+            user_data['username'] = temp['username'].value
+            user_data['email'] = temp['email'].value
+            user_data['firstname'] = temp['firstname'].value
+            user_data['lastname'] = temp['lastname'].value
+            user_data['active_games'] = temp['active_games'].value
+            user_data['password'] = temp['password'].value
 
-            active_games = dict(user_data['active_games'].value)
-            print(active_games)
-            if 'games' in active_games:
-                games = active_games['games']
+            print("USER DATA")
+            print(user_data)
+            if 'games' in user_data['active_games']:
+                games = user_data['active_games']['games']
                 games.append(match_serializer.data)
             else:
-                active_games['games'] = []
-                active_games['games'].append(match_serializer.data)
+                user_data['active_games']['games'] = []
+                user_data['active_games']['games'].append(match_serializer.data)
 
-            user_data['active_games'].value = active_games
-            serializer = UserSerializer(instance=user,data=user_data)
+            print("USER DATA AFTER UPDATE")
+            print(user_data)
+            serializer = UserSerializer(instance=username,data=user_data)
             if serializer.is_valid():
                 serializer.save()
-            print(data)
+            else:
+                print(serializer.errors)
                 
 
             user_to_delete = Queue.objects.get(id=user_in_queue['id'])
