@@ -166,39 +166,57 @@ def findMatch(request):
         if match_serializer.is_valid():
             match_serializer.save()
             #update users active_games field
-            username = User.objects.get(username=data['black'])
-            user = UserSerializer(username)
-            print("USER")
-            print(user)
-            temp = UserSerializer(username)
-            print("temp")
-            print(temp)
+            black_username = User.objects.get(username=data['black'])
+            black_user = UserSerializer(black_username)
 
-            user_data = {}
-            user_data['id']=temp['id'].value
-            user_data['username'] = temp['username'].value
-            user_data['email'] = temp['email'].value
-            user_data['firstname'] = temp['firstname'].value
-            user_data['lastname'] = temp['lastname'].value
-            user_data['active_games'] = temp['active_games'].value
-            user_data['password'] = temp['password'].value
+            black_user_data = {}
+            black_user_data['id']=black_user['id'].value
+            black_user_data['username'] = black_user['username'].value
+            black_user_data['email'] = black_user['email'].value
+            black_user_data['firstname'] = black_user['firstname'].value
+            black_user_data['lastname'] = black_user['lastname'].value
+            black_user_data['active_games'] = black_user['active_games'].value
+            black_user_data['password'] = black_user['password'].value
 
             print("USER DATA")
-            print(user_data)
-            if 'games' in user_data['active_games']:
-                games = user_data['active_games']['games']
+            print(black_user_data)
+            if 'games' in black_user_data['active_games']:
+                games = black_user_data['active_games']['games']
                 games.append(match_serializer.data)
             else:
-                user_data['active_games']['games'] = []
-                user_data['active_games']['games'].append(match_serializer.data)
+                black_user_data['active_games']['games'] = []
+                black_user_data['active_games']['games'].append(match_serializer.data)
 
-            print("USER DATA AFTER UPDATE")
-            print(user_data)
-            serializer = UserSerializer(instance=username,data=user_data)
-            if serializer.is_valid():
-                serializer.save()
+            black_serializer = UserSerializer(instance=black_username,data=black_user_data)
+            if black_serializer.is_valid():
+                black_serializer.save()
             else:
-                print(serializer.errors)
+                print(black_serializer.errors)
+
+            white_username = User.objects.get(username=data['white'])
+            white_user = UserSerializer(white_username)
+
+            white_user_data = {}
+            white_user_data['id']=white_user['id'].value
+            white_user_data['username'] = white_user['username'].value
+            white_user_data['email'] = white_user['email'].value
+            white_user_data['firstname'] = white_user['firstname'].value
+            white_user_data['lastname'] = white_user['lastname'].value
+            white_user_data['active_games'] = white_user['active_games'].value
+            white_user_data['password'] = white_user['password'].value
+
+            if 'games' in white_user_data['active_games']:
+                games = white_user_data['active_games']['games']
+                games.append(match_serializer.data)
+            else:
+                white_user_data['active_games']['games'] = []
+                white_user_data['active_games']['games'].append(match_serializer.data)
+
+            white_serializer = UserSerializer(instance=white_username,data=white_user_data)
+            if white_serializer.is_valid():
+                white_serializer.save()
+            else:
+                print(white_serializer.errors)
                 
 
             user_to_delete = Queue.objects.get(id=user_in_queue['id'])
