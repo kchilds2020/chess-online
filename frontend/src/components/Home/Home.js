@@ -13,6 +13,8 @@ const Home = () => {
             <div>Wins: {user.wins}</div>
             <div>Draws: {user.total_games - (user.wins + user.losses)}</div>
             <div>Losses: {user.losses}</div>
+            <div>Games: {user.active_games.games.map(element => 
+            <div key={element.id}>{element.white}(White) VS {element.black}(Black), turn: {element.turn === 'white' ? element.white : element.black}</div>)}</div>
             <button>Find Match</button>
             
         
