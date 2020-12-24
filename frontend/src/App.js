@@ -10,6 +10,7 @@ import Landing from './components/landing/Landing'
 import Login from './components/login/Login'
 import CreateAccount from './components/create-account/CreateAccount'
 import Home from './components/Home/Home'
+import Match from './components/Match/Match'
 import PrivateRoute from './components/Auth/PrivateRoute'
 import axios from 'axios'
 
@@ -44,6 +45,9 @@ const App = () => {
         <PrivateRoute path="/home" user={user} setUser={setUser}>     
           <Route exact strict component={Home}/>
         </PrivateRoute>
+        <Route path="/match">
+          <Match />
+        </Route>
         <Route path="/login">
           <Login />
         </Route>
