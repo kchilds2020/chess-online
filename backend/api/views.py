@@ -54,6 +54,13 @@ def getSpecificUser(request,pk):
     del data['password']
     return Response(data)
 
+@api_view(['GET'])
+def getMatch(request,pk):
+    match = Match.objects.get(id=pk)
+    serializer = MatchSerializer(match, many=False)
+    data= serializer.data
+    return Response(data)
+
 @api_view(['POST'])
 def createUser(request):
     #encrypt password

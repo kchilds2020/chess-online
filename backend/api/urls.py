@@ -10,6 +10,7 @@ urlpatterns = [
     path('update-user/<str:pk>/', views.updateUser, name='update-user'),
     path('delete-user/<str:pk>/', views.deleteUser, name='delete-user'),
     path('get-matches/', views.listMatches, name='get-matches'),
+    path('get-match/<str:pk>', views.getMatch, name='get-match'),
     path('get-queue/', views.listQueue, name='get-queue'),
     path('add-to-queue/',views.addToQueue, name='add-to-queue'),
     path('add-to-match/',views.addToMatch, name='add-to-match'),
