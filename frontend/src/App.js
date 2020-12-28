@@ -45,9 +45,9 @@ const App = () => {
         <PrivateRoute path="/home" user={user} setUser={setUser}>     
           <Route exact strict component={Home}/>
         </PrivateRoute>
-        <Route path="/match">
-          <Match />
-        </Route>
+        <PrivateRoute path="/match" user={user} setUser={setUser}>     
+          <Route exact strict component={Match}/>
+        </PrivateRoute>
         <Route path="/login">
           <Login />
         </Route>

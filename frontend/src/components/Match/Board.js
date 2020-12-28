@@ -1,13 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
+import Square from './Square'
 
 const Board = ({match, pov}) => {
     return (
         <BoardDiv> 
         {
           pov === 'black' ? 
-            state.position.map(row => row.slice(0).reverse().map((col,index) => <Square key = {index} position={col} updateBoard={updateBoard}/>) ) :
-            state.position.slice(0).reverse().map((row => row.map((col,index) => <Square key = {index} position={col} updateBoard={updateBoard}/>)))
+            match.board.map(row => row.slice(0).reverse().map((col,index) => <Square key = {index} match = {match} position={col}/>) ) :
+            match.board.slice(0).reverse().map((row => row.map((col,index) => <Square key = {index} match = {match} position={col}/>)))
         }
         </BoardDiv>
     )
