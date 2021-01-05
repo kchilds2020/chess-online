@@ -10,6 +10,7 @@ const Match = () => {
     const [pov, setPov] = useState('white')
 
     useEffect(() => {
+        console.log("USER",user)
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         let matchID = urlParams.get("id")
@@ -20,12 +21,16 @@ const Match = () => {
         })
         
 
-    }, [])
+    }, [user, match.white])
 
     return (
         <div>
             <Container> 
-                <Board match ={match} pov={pov}/>
+                {match ?
+                <Board match ={match} pov={pov}/>:
+                <div>no board</div>
+
+                }
             </Container>
         </div>
     )
